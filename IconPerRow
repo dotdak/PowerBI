@@ -1,0 +1,1 @@
+Icon := IF(SELECTEDVALUE(dim_profile[NAME] = "entity", UNICHAR(128073), "")
