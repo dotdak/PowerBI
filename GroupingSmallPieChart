@@ -1,0 +1,15 @@
+pie_chart := 
+VAR percentage = 0.1
+VAR current_type = SELECTEDVALUE(dim_type[TYPE])
+VAR total = CALCULATE(COUNTROWS(dim_profiles), ALLSELECTED())
+var current_count = COUNTX(filter(dim_profiles, [TYPE] = current_type), dim_profiles[PROFILE_SK])
+VAR cutoff_number = total * percentage
+var tmp = TOPN(4, SUMMARIZE(ALLEXCEPT(dim_profiles, dim_profiles[TYPE]), [TYPE], "countbytype", COUNTROWS(dim_profiles)), [countbytype], DESC)
+VAR sum_above_cutoff = SUMX(tmp, [countbytype])
+VAR remainder = total-sum_above_cutoff
+VAR filter_points = IF(not (current_type in SELECTCOLUMNS(tmp, "type", [TYPE])), 0, current_count)
+VAR result = IF(
+    current_type = "Others",
+    remainder,
+    filter_points)
+RETURN result
